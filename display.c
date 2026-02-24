@@ -19,8 +19,8 @@ void displayNetworks(wifi_network networks[], int n)
     int flags_width = 5;
 
     for (int i = 0; i < n; i++) {
-        if (strlen(networks[i].ssid) > ssid_width) ssid_width = strlen(networks[i].ssid);
-        if (strlen(networks[i].flags) > flags_width) flags_width = strlen(networks[i].flags);
+        if ((int)strlen(networks[i].ssid) > ssid_width) ssid_width = strlen(networks[i].ssid);
+        if ((int)strlen(networks[i].flags) > flags_width) flags_width = strlen(networks[i].flags);
     }
 
     int signal_width = 10;
