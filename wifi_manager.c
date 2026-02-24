@@ -69,9 +69,11 @@ int wait_for_connection()
 {
     char buf[BUF_SIZE];
 
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 15; i++)
+    {
         send_command("STATUS", buf, sizeof(buf));
-        if (strstr(buf, "wpa_state=COMPLETED")) {
+        if (strstr(buf, "wpa_state=COMPLETED"))
+	{
             return 1;
         }
         sleep(1);
@@ -92,8 +94,10 @@ int scan_networks(wifi_network *networks)
     char *saveptr1;
     char *line = strtok_r(buf, "\n", &saveptr1);
 
-    while (line) {
-        if (strstr(line, "bssid") == NULL) {
+    while (line)
+    {
+        if (strstr(line, "bssid") == NULL)
+	{
 
             char *saveptr2;
             char *bssid = strtok_r(line, "\t", &saveptr2);
@@ -102,7 +106,8 @@ int scan_networks(wifi_network *networks)
             char *flags  = strtok_r(NULL, "\t", &saveptr2);
             char *ssid   = strtok_r(NULL, "\t", &saveptr2);
 
-            if (ssid && strlen(ssid) > 0 && count < MAX_NETWORKS) {
+            if (ssid && strlen(ssid) > 0 && count < MAX_NETWORKS)
+	    {
                 strncpy(networks[count].ssid, ssid,
                         sizeof(networks[count].ssid) - 1);
                 strncpy(networks[count].bssid, bssid,
@@ -147,7 +152,8 @@ void connect_wifi(const char *ssid, const char *pass)
 
     printf("Authenticating...\n");
 
-    if (!wait_for_connection()) {
+    if (!wait_for_connection())
+    {
         printf("Connection failed.\n");
         return;
     }
@@ -155,7 +161,8 @@ void connect_wifi(const char *ssid, const char *pass)
     printf("Connected to WiFi. Obtaining IP...\n");
 
     system("dhclient -r wlo1");
-    if (system("dhclient wlo1") != 0) {
+    if (system("dhclient wlo1") != 0)
+    {
         printf("DHCP failed.\n");
         return;
     }
@@ -240,7 +247,8 @@ void displayNetworks(wifi_network networks[], int n)
         else color = RED;
 
         char flags_trunc[flags_width + 1];
-        if ((int)strlen(networks[i].flags) > flags_width) {
+        if ((int)strlen(networks[i].flags) > flags_width)
+	{
             strncpy(flags_trunc, networks[i].flags, flags_width - 3);
             flags_trunc[flags_width - 3] = '\0';
             strcat(flags_trunc, "...");
@@ -265,7 +273,8 @@ int main()
 
     printf("=== WiFi CLI ===\nType 'help' for commands\n");
 
-    while (1) {
+    while (1)
+    {
         printf("\nWiFi> ");
         fflush(stdout);
 
@@ -274,24 +283,29 @@ int main()
 
         input[strcspn(input, "\n")] = 0;
 
-        if (strcmp(input, "help") == 0) {
+        if (strcmp(input, "help") == 0)
+	{
 
             print_help();
 
-        } else if (strcmp(input, "scan") == 0) {
+        } else if (strcmp(input, "scan") == 0)
+	{
 
             int n = scan_networks(networks);
-            if (n == 0) {
+            if (n == 0)
+	    {
                 printf("No networks found.\n");
                 continue;
             }
 
 	    displayNetworks(networks, n);
 
-        } else if (strcmp(input, "connect") == 0) {
+        } else if (strcmp(input, "connect") == 0)
+	{
 
             int n = scan_networks(networks);
-            if (n == 0) {
+            if (n == 0)
+	    {
                 printf("No networks found.\n");
                 continue;
             }
@@ -299,7 +313,8 @@ int main()
             printf("Select network number: ");
             int choice;
             if (scanf("%d", &choice) != 1 ||
-                choice < 1 || choice > n) {
+                choice < 1 || choice > n)
+	    {
 
                 printf("Invalid selection.\n");
                 while (getchar() != '\n');
@@ -320,17 +335,20 @@ int main()
 
             memset(pass, 0, sizeof(pass));
 
-        } else if (strcmp(input, "disconnect") == 0) {
+        } else if (strcmp(input, "disconnect") == 0)
+	{
 
             disconnect_wifi();
 
-        } else if (strcmp(input, "exit") == 0) {
+        } else if (strcmp(input, "exit") == 0)
+	{
 
             break;
 
-        } else {
+        } else
+	{
 
-            printf("Unknown command.\n");
+		printf("Unknown command.\n");
         }
     }
 
