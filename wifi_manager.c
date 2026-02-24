@@ -184,6 +184,80 @@ void print_help()
     printf("  exit        - Quit\n");
 }
 
+/* ANSI color codes */
+#define RESET   "\033[0m"
+#define RED     "\033[31m"
+#define YELLOW  "\033[33m"
+#define GREEN   "\033[32m"
+
+void displayNetworks(wifi_network networks[], int n)
+{
+    int ssid_width = 4;
+    int flags_width = 5;
+
+    for (int i = 0; i < n; i++)
+    {
+        int len_ssid = strlen(networks[i].ssid);
+        int len_flags = strlen(networks[i].flags);
+        if (len_ssid > ssid_width) ssid_width = len_ssid;
+        if (len_flags > flags_width) flags_width = len_flags;
+    }
+
+    int signal_width = 10;
+
+    int table_width = 3 + 3 + ssid_width + 3 + signal_width + 3 + flags_width + 3;
+
+    for (int i = 0; i < table_width; i++) printf("=");
+    printf("\n");
+
+    printf("| %-3s | %-*s | %-*s | %-*s |\n",
+           "No", ssid_width, "SSID", signal_width, "Signal", flags_width, "Flags");
+
+    for (int i = 0; i < table_width; i++) printf("-");
+    printf("\n");
+
+    int min_sig = 1000, max_sig = -1000;
+    for (int i = 0; i < n; i++)
+    {
+        int sig = atoi(networks[i].signal);
+        if (sig > max_sig) max_sig = sig;
+        if (sig < min_sig) min_sig = sig;
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        int sig = atoi(networks[i].signal);
+        int bars = 1 + ((sig - min_sig) * 5) / (max_sig - min_sig);
+        if (bars < 1) bars = 1;
+        if (bars > 5) bars = 5;
+
+        char signal_bar[6] = "     ";
+        for (int j = 0; j < bars; j++) signal_bar[j] = '#';
+
+        char *color;
+        if (sig >= -60) color = GREEN;
+        else if (sig >= -75) color = YELLOW;
+        else color = RED;
+
+        char flags_trunc[flags_width + 1];
+        if ((int)strlen(networks[i].flags) > flags_width) {
+            strncpy(flags_trunc, networks[i].flags, flags_width - 3);
+            flags_trunc[flags_width - 3] = '\0';
+            strcat(flags_trunc, "...");
+        } else {
+            strcpy(flags_trunc, networks[i].flags);
+        }
+
+        printf("| %-3d | %-*s | %-3s %s%s%s | %-*s |\n",
+               i + 1, ssid_width, networks[i].ssid,
+               networks[i].signal, color, signal_bar, RESET,
+               flags_width, flags_trunc);
+    }
+
+    for (int i = 0; i < table_width; i++) printf("=");
+    printf("\n");
+}
+
 int main()
 {
     wifi_network networks[MAX_NETWORKS];
@@ -212,14 +286,7 @@ int main()
                 continue;
             }
 
-            printf("\nAvailable Networks:\n");
-            for (int i = 0; i < n; i++) {
-                printf("[%d] SSID: %s | Signal: %s dBm | %s\n",
-                       i + 1,
-                       networks[i].ssid,
-                       networks[i].signal,
-                       networks[i].flags);
-            }
+	    displayNetworks(networks, n);
 
         } else if (strcmp(input, "connect") == 0) {
 
