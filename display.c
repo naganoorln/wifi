@@ -6,11 +6,12 @@
 void print_help()
 {
     printf("\nCommands:\n");
-    printf("  scan        - Scan WiFi networks\n");
-    printf("  connect     - Connect to network\n");
-    printf("  disconnect  - Disconnect WiFi\n");
-    printf("  help        - Show commands\n");
-    printf("  exit        - Quit\n");
+    printf("  scan               - Scan WiFi networks\n");
+    printf("  connect            - Connect to network\n");
+    printf("  disconnect         - Disconnect WiFi\n");
+    printf("  help               - Show commands\n");
+    printf("  clear|clr|Ctrl+L   - Clear Console\n");
+    printf("  exit               - Quit\n");
 }
 
 void displayNetworks(wifi_network networks[], int n)

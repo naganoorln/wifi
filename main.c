@@ -21,6 +21,9 @@ int main()
         input[strcspn(input, "\n")] = 0;
 
         if (strcmp(input, "help") == 0) print_help();
+	else if (strcmp(input, "clear") == 0 || strcmp(input, "clr") == 0 || input[0] == 0x0c) {
+            printf("\033[2J\033[H");
+        }
         else if (strcmp(input, "scan") == 0) {
             int n = scan_networks(networks);
             if (n == 0) { printf("No networks found.\n"); continue; }
